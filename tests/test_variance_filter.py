@@ -1,0 +1,79 @@
+import unittest
+
+import numpy as np
+import pandas as pd
+
+from featurefilter import VarianceFilter
+
+
+class VarianceFilterTest(unittest.TestCase):
+    def test_fit_returns_none(self):
+        train_df = pd.DataFrame({'A': [0., 1.], 'B': [0., 0.]})
+        test_df = pd.DataFrame({'A': [0., 0.], 'B': [0., 1.]})
+
+        variance_filter = VarianceFilter()
+        return_value = variance_filter.fit(train_df)
+
+        assert return_value is None
+
+    def test_fit_sets_correct_columns_to_drop(self):
+        train_df = pd.DataFrame({'A': [0., 1.], 'B': [0., 0.]})
+
+        variance_filter = VarianceFilter()
+        variance_filter.fit(train_df)
+
+        assert variance_filter.columns_to_drop == ['B']
+
+    def test_transform(self):
+        test_df = pd.DataFrame({'A': [0., 0.], 'B': [0., 1.]})
+
+        variance_filter = VarianceFilter()
+        variance_filter.columns_to_drop = ['B']
+        test_df = variance_filter.transform(test_df)
+
+        assert test_df.equals(pd.DataFrame({'A': [0., 0.]}))
+
+    def test_fit_transform_continuous(self):
+        train_df = pd.DataFrame({'A': [0., 1.], 'B': [0., 0.]})
+
+        variance_filter = VarianceFilter()
+        train_df = variance_filter.fit_transform(train_df)
+
+        assert train_df.equals(pd.DataFrame({'A': [0., 1.]}))
+
+    def test_sample_ratio(self):
+        train_df = pd.DataFrame({'A': [0., 1.], 'B': [0., 0.]})
+
+        variance_filter = VarianceFilter(sample_ratio=0.5)
+        variance_filter.fit(train_df)
+
+
+    def test_remove_min_variance_for_categorical(self):
+        train_df = pd.DataFrame({'A': ['a', 'b', 'c'], 'B': ['a', 'a', 'a']})
+        test_df = pd.DataFrame({'A': ['a', 'a', 'b'], 'B': ['a', 'b', 'c']})
+
+        variance_filter = VarianceFilter(unique_cut=50)
+        train_df = variance_filter.fit_transform(train_df)
+        test_df = variance_filter.transform(test_df)
+
+        # Make sure column 'B' is dropped for both train and test set
+        # Also, column 'A' must not be dropped for the test set even though its
+        # variance in the test set is below the threshold
+        assert train_df.equals(pd.DataFrame({'A': ['a', 'b', 'c']}))
+        assert test_df.equals(pd.DataFrame({'A': ['a', 'a', 'b']}))
+
+    def test_remove_min_variance_for_single_valued_variables(self):
+        "Make sure it does not crash for variables with only one value"
+        train_df = pd.DataFrame({'A': ['a'] * 100})
+
+        variance_filter = VarianceFilter()
+        train_df = variance_filter.fit_transform(train_df)
+
+        # Make sure column 'B' is dropped for both train and test set
+        # Also, column 'A' must not be dropped for the test set even though its
+        # variance in the test set is below the threshold
+        assert np.array_equal(train_df.values, np.empty((100, 0)))
+
+
+if __name__ == '__main__':
+    unittest.main()
