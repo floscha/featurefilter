@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 import pandas as pd
 
@@ -30,7 +32,7 @@ class VarianceFilter(AbstractTransformer):
         self.sample_ratio = sample_ratio
         self.verbose = verbose
 
-        self.columns_to_drop = []
+        self.columns_to_drop = []  # type: List[str]
 
     @staticmethod
     def _get_freq_ratio(column: pd.Series) -> float:
