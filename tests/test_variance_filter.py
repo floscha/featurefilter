@@ -8,7 +8,6 @@ from featurefilter import VarianceFilter
 
 def test_fit_returns_none():
     train_df = pd.DataFrame({'A': [0., 1.], 'B': [0., 0.]})
-    test_df = pd.DataFrame({'A': [0., 0.], 'B': [0., 1.]})
 
     variance_filter = VarianceFilter()
     return_value = variance_filter.fit(train_df)

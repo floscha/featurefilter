@@ -32,7 +32,8 @@ class VarianceFilter(AbstractTransformer):
 
         self.columns_to_drop = []
 
-    def _get_freq_ratio(self, column: pd.Series) -> float:
+    @staticmethod
+    def _get_freq_ratio(column: pd.Series) -> float:
         """Compute frequency ratio."""
         value_counts = column.value_counts(normalize=True)
         if len(value_counts) == 1:
@@ -41,7 +42,8 @@ class VarianceFilter(AbstractTransformer):
         frequency_ratio = most_common_freq - second_most_common_freq
         return frequency_ratio
 
-    def _get_percentage_of_unique_values(self, column: pd.Series) -> float:
+    @staticmethod
+    def _get_percentage_of_unique_values(column: pd.Series) -> float:
         """Compute percentage of unique values."""
         return len(column.unique()) / len(column) * 100
 
