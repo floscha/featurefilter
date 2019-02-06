@@ -25,11 +25,13 @@ class VarianceFilter(AbstractTransformer):
                  frequency_cut: float=95/5,
                  unique_cut: float=10.0,
                  sample_ratio: float=1.0,
+                 seed: int=None,
                  verbose: bool=True):
         self.min_variance = min_variance
         self.frequency_cut = frequency_cut
         self.unique_cut = unique_cut
         self.sample_ratio = sample_ratio
+        self.seed = seed
         self.verbose = verbose
 
         self.columns_to_drop = []  # type: List[str]
@@ -58,7 +60,9 @@ class VarianceFilter(AbstractTransformer):
             if column_type in (np.float64, np.int64):
                 if self.sample_ratio < 1.0:
                     sample_size = int(len(current_column) * self.sample_ratio)
-                    n_variance = current_column.sample(sample_size).var()
+                    n_variance = (current_column
+                                  .sample(sample_size, random_state=self.seed)
+                                  .var())
                 else:
                     n_variance = current_column.var()
                 if n_variance < self.min_variance:

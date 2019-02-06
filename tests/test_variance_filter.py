@@ -40,10 +40,17 @@ def test_fit_transform_continuous():
     assert train_df.equals(pd.DataFrame({'A': [0., 1.]}))
 
 def test_sample_ratio():
-    train_df = pd.DataFrame({'A': [0., 1.], 'B': [0., 0.]})
+    train_df = pd.DataFrame({'A': [0, 0, 1]})
 
-    variance_filter = VarianceFilter(sample_ratio=0.5)
-    variance_filter.fit(train_df)
+    # Set seed to consider a sample of [0, 1]
+    variance_filter_1 = VarianceFilter(sample_ratio=0.7, seed=1)
+    variance_filter_1.fit(train_df)
+    # Set seed to consider a sample of [1, 1]
+    variance_filter_2 = VarianceFilter(sample_ratio=0.7, seed=3)
+    variance_filter_2.fit(train_df)
+
+    assert variance_filter_1.columns_to_drop == []
+    assert variance_filter_2.columns_to_drop == ['A']
 
 
 def test_remove_min_variance_for_categorical():
