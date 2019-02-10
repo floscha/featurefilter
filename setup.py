@@ -11,7 +11,8 @@ setup(
     license='MIT',
     packages=['featurefilter'],
     install_requires=[
-        'pandas'
+        'pandas',
+        'scikit-learn'
     ],
     zip_safe=False
 )
