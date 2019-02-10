@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
+from sklearn.base import ClassifierMixin, RegressorMixin
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 from .abstract_transformer import AbstractTransformer
@@ -24,7 +25,7 @@ class TreeBasedFilter(AbstractTransformer):
 
         self.columns_to_drop = []  # type: List[str]
 
-        self._model = None
+        self._model = None  # type: Union[ClassifierMixin, RegressorMixin]
 
     def fit(self, df: pd.DataFrame) -> None:
         self._model = (DecisionTreeClassifier(**self.model_parameters)
