@@ -1,6 +1,5 @@
 import unittest
 
-import numpy as np
 import pandas as pd
 
 from featurefilter import TreeBasedFilter
@@ -23,7 +22,7 @@ def test_fit_sets_correct_columns_to_drop_with_continuous_target():
 
     tree_based_filter = TreeBasedFilter(target_column='Y',
                                         top_features=1)
-    return_value = tree_based_filter.fit(train_df)
+    tree_based_filter.fit(train_df)
 
     assert tree_based_filter.columns_to_drop == ['B']
 
@@ -35,7 +34,7 @@ def test_fit_sets_correct_columns_to_drop_with_categorical_target():
     tree_based_filter = TreeBasedFilter(target_column='Y',
                                         categorical_target=True,
                                         top_features=1)
-    return_value = tree_based_filter.fit(train_df)
+    tree_based_filter.fit(train_df)
 
     assert tree_based_filter.columns_to_drop == ['B']
 
@@ -47,7 +46,7 @@ def test_setting_model_parameters():
 
     tree_based_filter = TreeBasedFilter(target_column='Y',
                                         model_parameters=model_parameters)
-    return_value = tree_based_filter.fit(train_df)
+    tree_based_filter.fit(train_df)
 
     assert tree_based_filter._model.max_depth == 10
 
