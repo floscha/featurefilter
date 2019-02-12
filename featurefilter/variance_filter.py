@@ -51,7 +51,7 @@ class VarianceFilter(AbstractTransformer):
         """Compute percentage of unique values."""
         return len(column.unique()) / len(column) * 100
 
-    def fit(self, df: pd.DataFrame) -> None:
+    def fit(self, df: pd.DataFrame, *args, **kwargs) -> None:
         for n in df.columns:
             current_column = df[n]
             column_type = current_column.dtype
@@ -88,5 +88,5 @@ class VarianceFilter(AbstractTransformer):
                               % (n, self.frequency_cut, self.unique_cut))
                     self.columns_to_drop.append(n)
 
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, df: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         return df.drop(columns=self.columns_to_drop)

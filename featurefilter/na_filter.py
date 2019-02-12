@@ -19,7 +19,7 @@ class NaFilter(AbstractTransformer):
 
         self.columns_to_drop = []  # type: List[str]
 
-    def fit(self, df: pd.DataFrame) -> None:
+    def fit(self, df: pd.DataFrame, *args, **kwargs) -> None:
         for n in df.columns:
             current_column = df[n]
 
@@ -39,5 +39,5 @@ class NaFilter(AbstractTransformer):
                           % (n, actual_na_ratio, self.max_na_ratio))
                 self.columns_to_drop.append(n)
 
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, df: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         return df.drop(columns=self.columns_to_drop)
