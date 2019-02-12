@@ -15,6 +15,7 @@ def test_fit_returns_none():
 
     assert return_value is None
 
+
 def test_fit_sets_correct_columns_to_drop():
     train_df = pd.DataFrame({'A': [0, np.nan, np.nan],
                              'B': [0, 0, np.nan]})
@@ -23,6 +24,7 @@ def test_fit_sets_correct_columns_to_drop():
     na_filter.fit(train_df)
 
     assert na_filter.columns_to_drop == ['A']
+
 
 def test_transform():
     test_df = pd.DataFrame({'A': [0, np.nan, np.nan],
@@ -33,6 +35,7 @@ def test_transform():
     test_df = na_filter.transform(test_df)
 
     assert test_df.equals(pd.DataFrame({'B': [0, 0, np.nan]}))
+
 
 def test_sample_ratio():
     train_df = pd.DataFrame({'A': [0, np.nan, np.nan]})
