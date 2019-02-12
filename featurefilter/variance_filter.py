@@ -1,4 +1,4 @@
-from typing import List
+from typing import List  # NOQA
 
 import numpy as np
 import pandas as pd
@@ -21,12 +21,12 @@ class VarianceFilter(AbstractTransformer):
             6546939345fe10649cefcbfee55d58fb682bc902/pkg/caret/R/nearZeroVar.R#L90
     """
     def __init__(self,
-                 min_variance: float=0.00001,
-                 frequency_cut: float=95/5,
-                 unique_cut: float=10.0,
-                 sample_ratio: float=1.0,
-                 seed: int=None,
-                 verbose: bool=True):
+                 min_variance: float = 0.00001,
+                 frequency_cut: float = 95/5,
+                 unique_cut: float = 10.0,
+                 sample_ratio: float = 1.0,
+                 seed: int = None,
+                 verbose: bool = True):
         self.min_variance = min_variance
         self.frequency_cut = frequency_cut
         self.unique_cut = unique_cut
@@ -67,8 +67,8 @@ class VarianceFilter(AbstractTransformer):
                     n_variance = current_column.var()
                 if n_variance < self.min_variance:
                     if self.verbose:
-                        print(("The variance of column '%s' (%0.4f) is below " +
-                               "the threshold of %0.4f")
+                        print(("The variance of column '%s' (%0.4f) is " +
+                               "below the threshold of %0.4f")
                               % (n, n_variance, self.min_variance))
                     self.columns_to_drop.append(n)
             # Categorical columns
