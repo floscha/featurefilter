@@ -15,6 +15,7 @@ def test_fit_returns_none():
 
     assert return_value is None
 
+
 def test_fit_sets_correct_columns_to_drop_with_continuous_target():
     train_df = pd.DataFrame({'A': [0, 0, 1, 1],
                              'B': [0, 1, 0, 1],
@@ -25,6 +26,7 @@ def test_fit_sets_correct_columns_to_drop_with_continuous_target():
     tree_based_filter.fit(train_df)
 
     assert tree_based_filter.columns_to_drop == ['B']
+
 
 def test_fit_sets_correct_columns_to_drop_with_categorical_target():
     train_df = pd.DataFrame({'A': [0, 0, 1, 1],
@@ -38,6 +40,7 @@ def test_fit_sets_correct_columns_to_drop_with_categorical_target():
 
     assert tree_based_filter.columns_to_drop == ['B']
 
+
 def test_setting_model_parameters():
     model_parameters = {'max_depth': 10}
     train_df = pd.DataFrame({'A': [0, 0, 1, 1],
@@ -49,6 +52,7 @@ def test_setting_model_parameters():
     tree_based_filter.fit(train_df)
 
     assert tree_based_filter._model.max_depth == 10
+
 
 def test_fit_transform():
     train_df = pd.DataFrame({'A': [0, 0, 1, 1],

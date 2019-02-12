@@ -1,8 +1,8 @@
-from typing import List, Union
+from typing import List, Union  # NOQA
 
 import numpy as np
 import pandas as pd
-from sklearn.base import ClassifierMixin, RegressorMixin
+from sklearn.base import ClassifierMixin, RegressorMixin  # NOQA
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 from .abstract_transformer import AbstractTransformer
@@ -11,11 +11,11 @@ from .abstract_transformer import AbstractTransformer
 class TreeBasedFilter(AbstractTransformer):
     def __init__(self,
                  target_column: str,
-                 categorical_target: bool=False,
-                 top_features: int=None,
-                 relative_treshold: float=None,
+                 categorical_target: bool = False,
+                 top_features: int = None,
+                 relative_treshold: float = None,
                  model_parameters=None,
-                 verbose: bool=True):
+                 verbose: bool = True):
         self.target_column = target_column
         self.categorical_target = categorical_target
         self.top_features = top_features
