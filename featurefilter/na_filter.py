@@ -20,7 +20,7 @@ class NaFilter(AbstractTransformer):
 
         self.columns_to_drop = []  # type: List[str]
 
-    def fit(self, df: pd.DataFrame) -> None:
+    def fit(self, df: pd.DataFrame, *args, **kwargs) -> None:
         for n in df.columns:
             current_column = df[n]
 
