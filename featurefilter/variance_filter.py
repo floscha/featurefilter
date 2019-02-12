@@ -88,5 +88,5 @@ class VarianceFilter(AbstractTransformer):
                               % (n, self.frequency_cut, self.unique_cut))
                     self.columns_to_drop.append(n)
 
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, df: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         return df.drop(columns=self.columns_to_drop)
