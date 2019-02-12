@@ -14,6 +14,7 @@ def test_fit_returns_none():
 
     assert return_value is None
 
+
 def test_fit_sets_correct_columns_to_drop():
     train_df = pd.DataFrame({'A': [0., 1.], 'B': [0., 0.]})
 
@@ -21,6 +22,7 @@ def test_fit_sets_correct_columns_to_drop():
     variance_filter.fit(train_df)
 
     assert variance_filter.columns_to_drop == ['B']
+
 
 def test_transform():
     test_df = pd.DataFrame({'A': [0., 0.], 'B': [0., 1.]})
@@ -31,6 +33,7 @@ def test_transform():
 
     assert test_df.equals(pd.DataFrame({'A': [0., 0.]}))
 
+
 def test_fit_transform_continuous():
     train_df = pd.DataFrame({'A': [0., 1.], 'B': [0., 0.]})
 
@@ -38,6 +41,7 @@ def test_fit_transform_continuous():
     train_df = variance_filter.fit_transform(train_df)
 
     assert train_df.equals(pd.DataFrame({'A': [0., 1.]}))
+
 
 def test_sample_ratio():
     train_df = pd.DataFrame({'A': [0, 0, 1]})
@@ -66,6 +70,7 @@ def test_remove_min_variance_for_categorical():
     # variance in the test set is below the threshold
     assert train_df.equals(pd.DataFrame({'A': ['a', 'b', 'c']}))
     assert test_df.equals(pd.DataFrame({'A': ['a', 'a', 'b']}))
+
 
 def test_remove_min_variance_for_single_valued_variables():
     "Make sure it does not crash for variables with only one value"
