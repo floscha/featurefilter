@@ -3,7 +3,11 @@ from typing import List, Union  # NOQA
 import numpy as np
 import pandas as pd
 from sklearn.base import ClassifierMixin, RegressorMixin  # NOQA
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor # NOQA
+from sklearn.ensemble import (GradientBoostingClassifier, # NOQA
+                              GradientBoostingRegressor,
+                              RandomForestClassifier,
+                              RandomForestRegressor)
 
 from .abstract_transformer import AbstractTransformer
 
@@ -14,23 +18,27 @@ class TreeBasedFilter(AbstractTransformer):
                  categorical_target: bool = False,
                  top_features: int = None,
                  relative_treshold: float = None,
+                 model_type: str = 'DecisionTree',
                  model_parameters=None,
                  verbose: bool = True):
         self.target_column = target_column
-        self.categorical_target = categorical_target
         self.top_features = top_features
         self.relative_treshold = relative_treshold
-        self.model_parameters = model_parameters if model_parameters else {}
         self.verbose = verbose
 
         self.columns_to_drop = []  # type: List[str]
 
-        self._model = None  # type: Union[ClassifierMixin, RegressorMixin]
+        available_models = ('DecisionTree', 'GradientBoosting', 'RandomForest')
+        if model_type not in available_models:
+            raise ValueError(("Model '%s' not available. Please choose one " +
+                              "of the following instead: %s")
+                             % (model_type, available_models))
+        model_parameters = model_parameters if model_parameters else {}
+        model_class_name = model_type + ('Classifier' if categorical_target
+                                         else 'Regressor')
+        self._model = globals()[model_class_name](**model_parameters)
 
     def fit(self, df: pd.DataFrame) -> None:
-        self._model = (DecisionTreeClassifier(**self.model_parameters)
-                       if self.categorical_target
-                       else DecisionTreeRegressor(**self.model_parameters))
         feature_column_names = np.array(
             [cn for cn in df.columns if cn != self.target_column]
         )

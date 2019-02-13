@@ -1,8 +1,64 @@
 import unittest
 
 import pandas as pd
+import pytest
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import (GradientBoostingClassifier,
+                              GradientBoostingRegressor,
+                              RandomForestClassifier,
+                              RandomForestRegressor)
 
 from featurefilter import TreeBasedFilter
+
+
+def test_decision_tree_is_default_model():
+    tree_based_filter = TreeBasedFilter(target_column='')
+
+    model = tree_based_filter._model
+    assert isinstance(model, DecisionTreeRegressor)
+
+
+def test_invalid_model_type():
+    invalid_model_type = 'UNK'
+    with pytest.raises(ValueError) as excinfo:
+        TreeBasedFilter(target_column='', model_type=invalid_model_type)
+
+    assert str(excinfo.value).startswith("Model '%s' not available."
+                                         % invalid_model_type)
+
+
+def test_gradient_boosting_regressor_model_type():
+    tree_based_filter = TreeBasedFilter(target_column='',
+                                        model_type='GradientBoosting')
+
+    model = tree_based_filter._model
+    assert isinstance(model, GradientBoostingRegressor)
+
+
+def test_gradient_boosting_classifier_model_type():
+    tree_based_filter = TreeBasedFilter(target_column='',
+                                        model_type='GradientBoosting',
+                                        categorical_target=True)
+
+    model = tree_based_filter._model
+    assert isinstance(model, GradientBoostingClassifier)
+
+
+def test_random_forest_regressor_model_type():
+    tree_based_filter = TreeBasedFilter(target_column='',
+                                        model_type='RandomForest')
+
+    model = tree_based_filter._model
+    assert isinstance(model, RandomForestRegressor)
+
+
+def test_random_forest_classifier_model_type():
+    tree_based_filter = TreeBasedFilter(target_column='',
+                                        model_type='RandomForest',
+                                        categorical_target=True)
+
+    model = tree_based_filter._model
+    assert isinstance(model, RandomForestClassifier)
 
 
 def test_fit_returns_none():
