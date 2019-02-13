@@ -33,12 +33,12 @@ class TreeBasedFilter(AbstractTransformer):
             raise ValueError(("Model '%s' not available. Please choose one " +
                               "of the following instead: %s")
                              % (model_type, available_models))
-        model_parameters = model_parameters if model_parameters else {}
         model_class_name = model_type + ('Classifier' if categorical_target
                                          else 'Regressor')
+        model_parameters = model_parameters if model_parameters else {}
         self._model = globals()[model_class_name](**model_parameters)
 
-    def fit(self, df: pd.DataFrame) -> None:
+    def fit(self, df: pd.DataFrame, *args, **kwargs) -> None:
         feature_column_names = np.array(
             [cn for cn in df.columns if cn != self.target_column]
         )
@@ -56,5 +56,5 @@ class TreeBasedFilter(AbstractTransformer):
                               else feature_names[:-self.top_features])
         self.columns_to_drop = list(top_features_names)
 
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, df: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         return df.drop(columns=self.columns_to_drop)
