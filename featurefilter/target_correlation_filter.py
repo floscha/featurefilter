@@ -1,4 +1,4 @@
-from typing import List
+from typing import List  # NOQA
 
 import numpy as np
 import pandas as pd
@@ -20,11 +20,11 @@ class TargetCorrelationFilter(AbstractTransformer):
     """
     def __init__(self,
                  target_column: str,
-                 min_correlation: float=0.01,
-                 max_correlation: float=0.95,
-                 sample_ratio: float=1.0,
-                 seed: int=None,
-                 verbose: bool=True):
+                 min_correlation: float = 0.01,
+                 max_correlation: float = 0.95,
+                 sample_ratio: float = 1.0,
+                 seed: int = None,
+                 verbose: bool = True):
         self.target_column = target_column
         self.min_correlation = min_correlation
         self.max_correlation = max_correlation
@@ -34,7 +34,7 @@ class TargetCorrelationFilter(AbstractTransformer):
 
         self.columns_to_drop = []  # type: List[str]
 
-    def fit(self, df: pd.DataFrame) -> None:
+    def fit(self, df: pd.DataFrame, *args, **kwargs) -> None:
         for n in df.columns:
             if n == self.target_column:
                 continue
@@ -58,10 +58,10 @@ class TargetCorrelationFilter(AbstractTransformer):
 
             correlation = abs(correlation)
 
-            if correlation < self.min_correlation:# or pd.isnull(correlation):
+            if correlation < self.min_correlation:
                 if self.verbose:
-                    print(("The absolute correlation of column '%s' (%0.4f) to " +
-                           "the target column '%s' is below the " +
+                    print(("The absolute correlation of column '%s' (%0.4f) " +
+                           "to the target column '%s' is below the " +
                            "threshold of %0.4f")
                           % (n, correlation, self.target_column,
                              self.min_correlation))
@@ -70,12 +70,12 @@ class TargetCorrelationFilter(AbstractTransformer):
 
             if correlation > self.max_correlation:
                 if self.verbose:
-                    print(("The absolute correlation of column '%s' (%0.4f) to " +
-                           "the target column '%s' is above the " +
+                    print(("The absolute correlation of column '%s' (%0.4f) " +
+                           "to the target column '%s' is above the " +
                            "threshold of %0.4f")
                           % (n, correlation, self.target_column,
                              self.max_correlation))
                 self.columns_to_drop.append(n)
 
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, df: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         return df.drop(columns=self.columns_to_drop)

@@ -1,6 +1,5 @@
 import unittest
 
-import numpy as np
 import pandas as pd
 
 from featurefilter import TargetCorrelationFilter
@@ -24,7 +23,8 @@ def test_high_negative_continuous_correlation():
     test_df = target_correlation_filter.transform(test_df)
 
     # Make sure column 'B' is dropped for both train and test set
-    # Also, column 'A' must not be dropped for the test set even though its correlation in the test set is above the threshold
+    # Also, column 'A' must not be dropped for the test set even though its
+    # correlation in the test set is above the threshold
     assert train_df.equals(pd.DataFrame({'A': [0, 0], 'Y': [0, 1]}))
     assert test_df.equals(pd.DataFrame({'A': [0, 1], 'Y': [0, 1]}))
 
@@ -38,7 +38,8 @@ def test_high_positive_continuous_correlation():
     test_df = target_correlation_filter.transform(test_df)
 
     # Make sure column 'B' is dropped for both train and test set
-    # Also, column 'A' must not be dropped for the test set even though its correlation in the test set is above the threshold
+    # Also, column 'A' must not be dropped for the test set even though its
+    # correlation in the test set is above the threshold
     assert train_df.equals(pd.DataFrame({'A': [0, 0], 'Y': [0, 1]}))
     assert test_df.equals(pd.DataFrame({'A': [0, 1], 'Y': [0, 1]}))
 
@@ -52,7 +53,8 @@ def test_low_categorical_correlation():
     test_df = target_correlation_filter.transform(test_df)
 
     # Make sure column 'B' is dropped for both train and test set
-    # Also, column 'A' must not be dropped for the test set even though its correlation in the test set is above the threshold
+    # Also, column 'A' must not be dropped for the test set even though its
+    # correlation in the test set is above the threshold
     assert train_df.equals(pd.DataFrame({'A': ['a', 'a'], 'Y': [0, 1]}))
     assert test_df.equals(pd.DataFrame({'A': ['a', 'b'], 'Y': [0, 1]}))
 
