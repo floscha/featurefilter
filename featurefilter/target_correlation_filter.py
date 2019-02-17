@@ -51,7 +51,6 @@ class TargetCorrelationFilter(AbstractTransformer):
                 sample = df[[n, self.target_column]].sample(
                     sample_size, random_state=self.seed
                 )
-                # print(sample)
                 correlation = sample[n].corr(sample[self.target_column])
             else:
                 correlation = current_column.corr(df[self.target_column])

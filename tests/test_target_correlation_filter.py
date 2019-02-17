@@ -60,22 +60,35 @@ def test_low_categorical_correlation():
 
 
 def test_sample_ratio():
-    train_df = pd.DataFrame({'A': [0, 0, 1, 1], 'Y': [0, 1, 0, 1]})
+    train_df = pd.DataFrame({'A': [0, 0, 1, 1, 1, 1], 'Y': [0, 1, 0, 1, 0, 1]})
 
-    # Set seed to consider a sample of [0, 1]
+    # Set seed to sample the following DataFrame for a correlation of ~0.33:
+    #    A  Y
+    # 5  1  1
+    # 2  1  0
+    # 1  0  1
+    # 3  1  1
     target_correlation_filter_1 = TargetCorrelationFilter(target_column='Y',
-                                                          sample_ratio=0.25,
-                                                          seed=5)
+                                                          sample_ratio=0.7,
+                                                          seed=0)
     target_correlation_filter_1.fit(train_df)
-    # Set seed to consider a sample of [1, 1]
+    # Set seed to sample the following DataFrame for a correlation of 0.00:
+    #    A  Y
+    # 0  0  0
+    # 2  1  0
+    # 5  1  1
+    # 1  0  1
     target_correlation_filter_2 = TargetCorrelationFilter(target_column='Y',
-                                                          sample_ratio=0.25,
-                                                          seed=6)
+                                                          sample_ratio=0.7,
+                                                          seed=8)
     target_correlation_filter_2.fit(train_df)
-    # Set seed to consider a sample of [1, 1]
+    # Set seed to sample the following DataFrame for a correlation of ~0.99:
+    #    A  Y
+    # 2  1  0
+    # 1  0  1
     target_correlation_filter_3 = TargetCorrelationFilter(target_column='Y',
-                                                          sample_ratio=0.25,
-                                                          seed=7)
+                                                          sample_ratio=0.4,
+                                                          seed=1)
     target_correlation_filter_3.fit(train_df)
 
     assert target_correlation_filter_1.columns_to_drop == []
