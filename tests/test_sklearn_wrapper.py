@@ -3,6 +3,8 @@ import unittest
 import pandas as pd
 import pytest
 from sklearn import feature_selection as sklearn_feature_selection
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
 
 from featurefilter import SklearnWrapper
 
@@ -50,6 +52,54 @@ def test_missing_target_column():
         SklearnWrapper(k_best_filter)
 
     assert str(excinfo.value) == "A target columns must be set for SelectKBest"
+
+
+def test_glm_based_feature_selection():
+    train_df = pd.DataFrame({'A': [0, 0, 1, 1],
+                             'B': [0, 1, 0, 1],
+                             'Y': [0, 0, 1, 1]})
+    expected_output = pd.DataFrame({'A': [0, 0, 1, 1],
+                                    'Y': [0, 0, 1, 1]})
+
+    model = sklearn_feature_selection.SelectFromModel(LinearRegression(),
+                                                      threshold=0.5)
+    filter = SklearnWrapper(model, target_column='Y')
+    train_df = filter.fit_transform(train_df)
+
+    assert train_df.equals(expected_output)
+
+
+def test_prefit_model():
+    train_df = pd.DataFrame({'A': [0, 0, 1, 1],
+                             'B': [0, 1, 0, 1],
+                             'Y': [0, 0, 1, 1]})
+    expected_output = pd.DataFrame({'A': [0, 0, 1, 1],
+                                    'Y': [0, 0, 1, 1]})
+
+    linear_regression = LinearRegression()
+    linear_regression.fit(train_df[['A', 'B']], train_df['Y'])
+    model = sklearn_feature_selection.SelectFromModel(linear_regression,
+                                                      prefit=True,
+                                                      threshold=0.5)
+    filter = SklearnWrapper(model, target_column='Y')
+    train_df = filter.transform(train_df)
+
+    assert train_df.equals(expected_output)
+
+
+def test_tree_based_feature_selection():
+    train_df = pd.DataFrame({'A': [0, 0, 1, 1],
+                             'B': [0, 1, 0, 1],
+                             'Y': [0, 0, 1, 1]})
+    expected_output = pd.DataFrame({'A': [0, 0, 1, 1],
+                                    'Y': [0, 0, 1, 1]})
+
+    model = sklearn_feature_selection.SelectFromModel(DecisionTreeRegressor(),
+                                                      threshold=0.5)
+    filter = SklearnWrapper(model, target_column='Y')
+    train_df = filter.fit_transform(train_df)
+
+    assert train_df.equals(expected_output)
 
 
 if __name__ == '__main__':

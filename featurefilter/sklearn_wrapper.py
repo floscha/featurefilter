@@ -29,16 +29,21 @@ class SklearnWrapper(AbstractTransformer):
         self.columns_to_drop = []  # type: List[str]
 
     def fit(self, df: pd.DataFrame, *args, **kwargs) -> None:
-        columns_names = df.columns
+        column_names = df.columns
         if self.target_column:
-            columns_names = columns_names.drop(self.target_column)
-            self.filter.fit(df[columns_names],
-                            df[self.target_column])
+            column_names = column_names.drop(self.target_column)
+            self.filter.fit(df[column_names], df[self.target_column])
         else:
             self.filter.fit(df)
         support_mask = self.filter._get_support_mask()
         # Inverse support_mask since it contains the columns to keep
-        self.columns_to_drop = columns_names[~support_mask]
+        self.columns_to_drop = list(column_names[~support_mask])
 
     def transform(self, df: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
+        if (isinstance(self.filter, sklearn_feature_selection.SelectFromModel)
+                and self.filter.prefit):
+            column_names = df.columns.drop(self.target_column)
+            support_mask = self.filter._get_support_mask()
+            return df.drop(columns=column_names[~support_mask])
+
         return df.drop(columns=self.columns_to_drop)
