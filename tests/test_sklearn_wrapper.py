@@ -25,6 +25,37 @@ def test_removing_features_with_low_variance():
     assert test_df.equals(pd.DataFrame({'A': [0, 0, 0]}))
 
 
+def test_rfe():
+    train_df = pd.DataFrame({'A': [0, 0, 1, 1],
+                             'B': [0, 1, 0, 1],
+                             'Y': [0, 0, 1, 1]})
+    expected_output = pd.DataFrame({'A': [0, 0, 1, 1],
+                                    'Y': [0, 0, 1, 1]})
+
+    model = sklearn_feature_selection.RFE(LinearRegression(),
+                                          n_features_to_select=1)
+    filter = SklearnWrapper(model, target_column='Y')
+    train_df = filter.fit_transform(train_df)
+
+    assert train_df.equals(expected_output)
+
+
+def test_rfecv():
+    train_df = pd.DataFrame({'A': [0, 0, 1, 1],
+                             'B': [0, 1, 0, 1],
+                             'Y': [0, 0, 1, 1]})
+    expected_output = pd.DataFrame({'A': [0, 0, 1, 1],
+                                    'Y': [0, 0, 1, 1]})
+
+    model = sklearn_feature_selection.RFECV(LinearRegression(),
+                                            min_features_to_select=1,
+                                            cv=3)
+    filter = SklearnWrapper(model, target_column='Y')
+    train_df = filter.fit_transform(train_df)
+
+    assert train_df.equals(expected_output)
+
+
 def test_univariate_feature_selection():
     train_df = pd.DataFrame({'A': [0, 0, 1, 1],
                              'B': [0, 1, 0, 1],
