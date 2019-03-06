@@ -13,8 +13,10 @@ def test_removing_features_with_low_variance():
     train_df = pd.DataFrame({'A': [0, 1, 2], 'B': [0, 0, 0]})
     test_df = pd.DataFrame({'A': [0, 0, 0], 'B': [0, 1, 2]})
 
-    sklearn_filter = sklearn_feature_selection.VarianceThreshold(threshold=0.5)
-    variance_threshold = SklearnWrapper(sklearn_filter)
+    sklearn_selector = sklearn_feature_selection.VarianceThreshold(
+        threshold=0.5
+    )
+    variance_threshold = SklearnWrapper(sklearn_selector)
     train_df = variance_threshold.fit_transform(train_df)
     test_df = variance_threshold.transform(test_df)
 
@@ -34,8 +36,8 @@ def test_rfe():
 
     model = sklearn_feature_selection.RFE(LinearRegression(),
                                           n_features_to_select=1)
-    filter = SklearnWrapper(model, target_column='Y')
-    train_df = filter.fit_transform(train_df)
+    selector = SklearnWrapper(model, target_column='Y')
+    train_df = selector.fit_transform(train_df)
 
     assert train_df.equals(expected_output)
 
@@ -50,8 +52,8 @@ def test_rfecv():
     model = sklearn_feature_selection.RFECV(LinearRegression(),
                                             min_features_to_select=1,
                                             cv=3)
-    filter = SklearnWrapper(model, target_column='Y')
-    train_df = filter.fit_transform(train_df)
+    selector = SklearnWrapper(model, target_column='Y')
+    train_df = selector.fit_transform(train_df)
 
     assert train_df.equals(expected_output)
 
@@ -63,24 +65,24 @@ def test_univariate_feature_selection():
     expected_output = pd.DataFrame({'A': [0, 0, 1, 1],
                                     'Y': [0, 0, 1, 1]})
 
-    k_best_filter = sklearn_feature_selection.SelectKBest(
+    k_best_selector = sklearn_feature_selection.SelectKBest(
         sklearn_feature_selection.chi2,
         k=1
     )
-    filter = SklearnWrapper(k_best_filter, target_column='Y')
-    train_df = filter.fit_transform(train_df)
+    selector = SklearnWrapper(k_best_selector, target_column='Y')
+    train_df = selector.fit_transform(train_df)
 
     assert train_df.equals(expected_output)
 
 
 def test_missing_target_column():
-    k_best_filter = sklearn_feature_selection.SelectKBest(
+    k_best_selector = sklearn_feature_selection.SelectKBest(
         sklearn_feature_selection.chi2,
         k=1
     )
 
     with pytest.raises(ValueError) as excinfo:
-        SklearnWrapper(k_best_filter)
+        SklearnWrapper(k_best_selector)
 
     assert str(excinfo.value) == "A target columns must be set for SelectKBest"
 
@@ -94,8 +96,8 @@ def test_glm_based_feature_selection():
 
     model = sklearn_feature_selection.SelectFromModel(LinearRegression(),
                                                       threshold=0.5)
-    filter = SklearnWrapper(model, target_column='Y')
-    train_df = filter.fit_transform(train_df)
+    selector = SklearnWrapper(model, target_column='Y')
+    train_df = selector.fit_transform(train_df)
 
     assert train_df.equals(expected_output)
 
@@ -112,8 +114,8 @@ def test_prefit_model():
     model = sklearn_feature_selection.SelectFromModel(linear_regression,
                                                       prefit=True,
                                                       threshold=0.5)
-    filter = SklearnWrapper(model, target_column='Y')
-    train_df = filter.transform(train_df)
+    selector = SklearnWrapper(model, target_column='Y')
+    train_df = selector.transform(train_df)
 
     assert train_df.equals(expected_output)
 
@@ -127,8 +129,8 @@ def test_tree_based_feature_selection():
 
     model = sklearn_feature_selection.SelectFromModel(DecisionTreeRegressor(),
                                                       threshold=0.5)
-    filter = SklearnWrapper(model, target_column='Y')
-    train_df = filter.fit_transform(train_df)
+    selector = SklearnWrapper(model, target_column='Y')
+    train_df = selector.fit_transform(train_df)
 
     assert train_df.equals(expected_output)
 
