@@ -110,15 +110,27 @@ def test_setting_model_parameters():
     assert tree_based_filter._model.max_depth == 10
 
 
-def test_fit_transform():
+def test_fit_transform_top_features():
     train_df = pd.DataFrame({'A': [0, 0, 1, 1],
                              'B': [0, 1, 0, 1],
                              'Y': [0, 0, 1, 1]})
     expected_output = pd.DataFrame({'A': [0, 0, 1, 1],
                                     'Y': [0, 0, 1, 1]})
 
-    tree_based_filter = TreeBasedFilter(target_column='Y',
-                                        top_features=1)
+    tree_based_filter = TreeBasedFilter(target_column='Y', top_features=1)
+    train_df = tree_based_filter.fit_transform(train_df)
+
+    assert train_df.equals(expected_output)
+
+
+def test_fit_transform_threshold():
+    train_df = pd.DataFrame({'A': [0, 0, 1, 1],
+                             'B': [0, 1, 0, 1],
+                             'Y': [0, 0, 1, 1]})
+    expected_output = pd.DataFrame({'A': [0, 0, 1, 1],
+                                    'Y': [0, 0, 1, 1]})
+
+    tree_based_filter = TreeBasedFilter(target_column='Y', threshold=0.5)
     train_df = tree_based_filter.fit_transform(train_df)
 
     assert train_df.equals(expected_output)
