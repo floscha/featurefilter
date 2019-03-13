@@ -81,7 +81,6 @@ class GLMFilter(AbstractTransformer):
                            "is too low to end up in the %d best features")
                           % (cn, fi, self.top_features))
 
-
         if self.threshold is not None:
             for cn, fi in zip(feature_column_names, feature_importances):
                 if fi < self.threshold:
