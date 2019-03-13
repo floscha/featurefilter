@@ -68,17 +68,19 @@ class GLMFilter(AbstractTransformer):
         feature_importances = feature_importances / max(feature_importances)
 
         if self.top_features:
-            top_feature_importances = np.argsort(feature_importances)[::-1]
-            feature_names = feature_column_names[top_feature_importances]
-            if self.verbose:
-                for i, (cn, fi) in enumerate(zip(feature_names,
-                                                 top_feature_importances)):
-                    if i < self.top_features:
-                        continue
-                    self.columns_to_drop.append(cn)
+            top_feature_indices = np.argsort(feature_importances)[::-1]
+            feature_names = feature_column_names[top_feature_indices]
+            top_feature_importances = feature_importances[top_feature_indices]
+            for i, (cn, fi) in enumerate(zip(feature_names,
+                                             top_feature_importances)):
+                if i < self.top_features:
+                    continue
+                self.columns_to_drop.append(cn)
+                if self.verbose:
                     print(("The feature importance of column '%s' (%0.4f) " +
                            "is too low to end up in the %d best features")
                           % (cn, fi, self.top_features))
+
 
         if self.threshold is not None:
             for cn, fi in zip(feature_column_names, feature_importances):

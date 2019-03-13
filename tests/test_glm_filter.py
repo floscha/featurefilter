@@ -1,3 +1,5 @@
+import contextlib
+from io import StringIO
 import unittest
 
 import pandas as pd
@@ -142,6 +144,39 @@ def test_fit_transform_threshold():
     train_df = glm_filter.fit_transform(train_df)
 
     assert train_df.equals(expected_output)
+
+
+def _capture_verbose_output_for_model(filter):
+    df = pd.DataFrame({'A': [0, 0, 1, 1],
+                       'B': [0, 1, 0, 1],
+                       'Y': [0, 0, 1, 1]})
+
+    temp_stdout = StringIO()
+    with contextlib.redirect_stdout(temp_stdout):
+        filter.fit(df)
+    output = temp_stdout.getvalue().strip()
+
+    return output
+
+
+def test_verbose_output_for_top_features():
+    expected_output = ("The feature importance of column 'B' (0.0000) is " +
+                       "too low to end up in the 1 best features")
+    glm_filter = GLMFilter(target_column='Y', top_features=1)
+
+    output = _capture_verbose_output_for_model(glm_filter)
+
+    assert output == expected_output
+
+
+def test_verbose_output_for_threshold():
+    expected_output = ("The feature importance of column 'B' (0.0000) is " +
+                       "below the threshold of 0.5000")
+    glm_filter = GLMFilter(target_column='Y', threshold=0.5)
+
+    output = _capture_verbose_output_for_model(glm_filter)
+
+    assert output == expected_output
 
 
 if __name__ == '__main__':
