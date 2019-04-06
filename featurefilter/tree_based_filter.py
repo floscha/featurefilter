@@ -17,13 +17,13 @@ class TreeBasedFilter(AbstractTransformer):
                  target_column: str,
                  categorical_target: bool = False,
                  top_features: int = None,
-                 relative_treshold: float = None,
+                 threshold: float = None,
                  model_type: str = 'DecisionTree',
                  model_parameters=None,
                  verbose: bool = True):
         self.target_column = target_column
         self.top_features = top_features
-        self.relative_treshold = relative_treshold
+        self.threshold = threshold
         self.verbose = verbose
 
         self.columns_to_drop = []  # type: List[str]
@@ -46,15 +46,29 @@ class TreeBasedFilter(AbstractTransformer):
                         df[self.target_column])
 
         feature_importances = self._model.feature_importances_
-        if self.verbose:
-            for cn, fi in zip(feature_column_names, feature_importances):
-                print(cn, fi)
 
-        feature_names = feature_column_names[np.argsort(feature_importances)]
-        print(feature_names)
-        top_features_names = (feature_names if not self.top_features
-                              else feature_names[:-self.top_features])
-        self.columns_to_drop = list(top_features_names)
+        if self.top_features:
+            top_feature_indices = np.argsort(feature_importances)[::-1]
+            feature_names = feature_column_names[top_feature_indices]
+            top_feature_importances = feature_importances[top_feature_indices]
+            for i, (cn, fi) in enumerate(zip(feature_names,
+                                             top_feature_importances)):
+                if i < self.top_features:
+                    continue
+                self.columns_to_drop.append(cn)
+                if self.verbose:
+                    print(("The feature importance of column '%s' (%0.4f) " +
+                           "is too low to end up in the %d best features")
+                          % (cn, fi, self.top_features))
+
+        if self.threshold is not None:
+            for cn, fi in zip(feature_column_names, feature_importances):
+                if fi < self.threshold:
+                    self.columns_to_drop.append(cn)
+                    if self.verbose:
+                        print(("The feature importance of column '%s' " +
+                               "(%0.4f) is below the threshold of %0.4f")
+                              % (cn, fi, self.threshold))
 
     def transform(self, df: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         return df.drop(columns=self.columns_to_drop)
