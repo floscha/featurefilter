@@ -50,5 +50,28 @@ def test_categorical_correlation():
     assert test_df.equals(pd.DataFrame({'A': ['a', 'b'], 'Y': [0, 1]}))
 
 
+def test_sample_ratio():
+    train_df = pd.DataFrame({'A': [0, 0, 1, 1, 1, 1], 'B': [0, 1, 0, 1, 0, 1]})
+
+    # Set seed to sample the following DataFrame for a correlation of 0.00:
+    #    A  Y
+    # 0  0  0
+    # 2  1  0
+    # 5  1  1
+    # 1  0  1
+    filter_1 = FeatureCorrelationFilter(sample_ratio=0.7, seed=8)
+    filter_1.fit(train_df)
+
+    # Set seed to sample the following DataFrame for a correlation of ~0.99:
+    #    A  Y
+    # 2  1  0
+    # 1  0  1
+    filter_2 = FeatureCorrelationFilter(sample_ratio=0.4, seed=1)
+    filter_2.fit(train_df)
+
+    assert filter_1.columns_to_drop == []
+    assert filter_2.columns_to_drop == ['B']
+
+
 if __name__ == '__main__':
     unittest.main()
