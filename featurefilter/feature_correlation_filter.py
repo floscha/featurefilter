@@ -1,7 +1,7 @@
 from typing import List  # NOQA
 
-import numpy as np
 import pandas as pd
+from pandas.api.types import is_string_dtype
 
 from .abstract_transformer import AbstractTransformer
 
@@ -47,8 +47,8 @@ class FeatureCorrelationFilter(AbstractTransformer):
                 n_col = df[n].sample(sample_size, random_state=self.seed)
             else:
                 n_col = df[n]
-            column_type = n_col.dtype
-            if column_type not in (np.float64, np.int64):
+
+            if is_string_dtype(n_col):
                 n_col = n_col.astype('category').cat.codes
 
             for m in feature_column_names[i + 1:]:
@@ -57,8 +57,8 @@ class FeatureCorrelationFilter(AbstractTransformer):
                     m_col = df[m].sample(sample_size, random_state=self.seed)
                 else:
                     m_col = df[m]
-                column_type = m_col.dtype
-                if column_type not in (np.float64, np.int64):
+
+                if is_string_dtype(m_col):
                     m_col = m_col.astype('category').cat.codes
 
                 correlation = abs(n_col.corr(m_col))
