@@ -49,5 +49,15 @@ def test_sample_ratio():
     assert na_filter_2.columns_to_drop == ['A']
 
 
+def test_sparse_data():
+    sdf = pd.DataFrame({'A': [0] * 10 + [np.nan] * 20,
+                        'B': [0] * 20 + [np.nan] * 10}).to_sparse()
+
+    na_filter = NaFilter(max_na_ratio=0.5)
+    na_filter.fit(sdf)
+
+    assert na_filter.columns_to_drop == ['A']
+
+
 if __name__ == '__main__':
     unittest.main()
