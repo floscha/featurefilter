@@ -1,7 +1,7 @@
 from typing import List  # NOQA
 
-import numpy as np
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
 
 from .abstract_transformer import AbstractTransformer
 
@@ -54,10 +54,9 @@ class VarianceFilter(AbstractTransformer):
     def fit(self, df: pd.DataFrame, *args, **kwargs) -> None:
         for n in df.columns:
             current_column = df[n]
-            column_type = current_column.dtype
 
             # Continuous columns
-            if column_type in (np.float64, np.int64):
+            if is_numeric_dtype(current_column):
                 if self.sample_ratio < 1.0:
                     sample_size = int(len(current_column) * self.sample_ratio)
                     n_variance = (current_column
@@ -72,7 +71,7 @@ class VarianceFilter(AbstractTransformer):
                               % (n, n_variance, self.min_variance))
                     self.columns_to_drop.append(n)
             # Categorical columns
-            elif column_type == pd.Categorical:
+            else:
                 is_above_frequency_cut = (
                     self._get_freq_ratio(current_column)
                     > self.frequency_cut
