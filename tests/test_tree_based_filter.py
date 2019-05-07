@@ -171,5 +171,17 @@ def test_verbose_output_for_threshold():
     assert output == expected_output
 
 
+def test_sparse_data():
+    # Create a sparse DataFrame with a correlation of -1
+    sdf = pd.DataFrame({'A': [0] * 10 + [1] * 10,
+                        'B': [0, 1] * 10,
+                        'Y': [0] * 10 + [1] * 10}).to_sparse()
+    tree_based_filter = TreeBasedFilter(target_column='Y', top_features=1)
+
+    tree_based_filter.fit(sdf)
+
+    assert tree_based_filter.columns_to_drop == ['B']
+
+
 if __name__ == '__main__':
     unittest.main()
