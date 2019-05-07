@@ -243,5 +243,19 @@ def test_verbose_output_for_select_rfecv():
     assert output == expected_output
 
 
+def test_sparse_data():
+    train_df = pd.DataFrame({'A': [0, 0, 1, 1],
+                             'B': [0, 1, 0, 1],
+                             'Y': [0, 0, 1, 1]})
+    expected_output = pd.DataFrame({'A': [0, 0, 1, 1],
+                                    'Y': [0, 0, 1, 1]})
+
+    model = RFE(LinearRegression(), n_features_to_select=1)
+    selector = SklearnWrapper(model, target_column='Y')
+    train_df = selector.fit_transform(train_df)
+
+    assert train_df.equals(expected_output)
+
+
 if __name__ == '__main__':
     unittest.main()
