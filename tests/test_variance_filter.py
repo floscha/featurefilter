@@ -85,5 +85,16 @@ def test_remove_min_variance_for_single_valued_variables():
     assert np.array_equal(train_df.values, np.empty((100, 0)))
 
 
+def test_sparse_data():
+    # Create a sparse DataFrame with a correlation of -1
+    sdf = pd.DataFrame({'A': [0] * 20,
+                        'B': [0] * 10 + [1] * 10}).to_sparse()
+
+    variance_filter = VarianceFilter()
+    variance_filter.fit(sdf)
+
+    assert variance_filter.columns_to_drop == ['A']
+
+
 if __name__ == '__main__':
     unittest.main()

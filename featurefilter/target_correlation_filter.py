@@ -1,7 +1,7 @@
 from typing import List  # NOQA
 
-import numpy as np
 import pandas as pd
+from pandas.api.types import is_string_dtype
 
 from .abstract_transformer import AbstractTransformer
 
@@ -40,10 +40,9 @@ class TargetCorrelationFilter(AbstractTransformer):
                 continue
 
             current_column = df[n]
-            column_type = current_column.dtype
 
             # Encode categorical columns
-            if column_type not in (np.float64, np.int64):
+            if is_string_dtype(current_column):
                 current_column = current_column.astype('category').cat.codes
 
             if self.sample_ratio < 1.0:

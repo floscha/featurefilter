@@ -73,5 +73,16 @@ def test_sample_ratio():
     assert filter_2.columns_to_drop == ['B']
 
 
+def test_sparse_data():
+    # Create a sparse DataFrame with a correlation of -1
+    sdf = pd.DataFrame({'A': [0] * 10 + [1] * 10,
+                        'B': [0] * 10 + [1] * 10}).to_sparse()
+
+    filter_ = FeatureCorrelationFilter()
+    filter_.fit(sdf)
+
+    assert filter_.columns_to_drop == ['B']
+
+
 if __name__ == '__main__':
     unittest.main()

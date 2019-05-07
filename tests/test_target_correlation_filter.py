@@ -96,5 +96,16 @@ def test_sample_ratio():
     assert target_correlation_filter_3.columns_to_drop == ['A']
 
 
+def test_sparse_data():
+    # Create a sparse DataFrame with a correlation of -1
+    sdf = pd.DataFrame({'A': [0] * 10 + [1] * 10,
+                        'Y': [1] * 10 + [0] * 10}).to_sparse()
+
+    target_correlation_filter = TargetCorrelationFilter(target_column='Y')
+    target_correlation_filter.fit(sdf)
+
+    assert target_correlation_filter.columns_to_drop == ['A']
+
+
 if __name__ == '__main__':
     unittest.main()
