@@ -5,3 +5,4 @@
 .coverage*
 .mypy_cache/*
 .ipynb_checkpoints/
+.idea/
