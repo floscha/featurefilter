@@ -21,8 +21,7 @@ class NaFilter(AbstractTransformer):
 
     def fit(self, df: pd.DataFrame, *args, **kwargs) -> None:
         if self.sample_ratio < 1.0:
-            sample_size = int(len(df) * self.sample_ratio)
-            df = df.sample(sample_size, random_state=self.seed)
+            df = df.sample(frac=self.sample_ratio, random_state=self.seed)
 
         na_ratios = df.isna().mean()
 
