@@ -9,7 +9,7 @@ matrix:
 before_install:
   - pip install --upgrade setuptools pip
 install:
-  - pip install -e .
+  - pip install -e .[spark]
   - pip install -r test-requirements.txt
 script:
   - mypy --config-file=.mypy.ini featurefilter
