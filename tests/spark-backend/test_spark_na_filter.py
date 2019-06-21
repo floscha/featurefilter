@@ -40,10 +40,10 @@ def test_transform():
 def test_sample_ratio():
     train_df = ks.DataFrame({'A': [0, np.nan, np.nan, 0, np.nan, np.nan]})
 
-    # Use seed to get values [0, NaN, 0, NaN] which results in a na_ratio of 0.5
+    # Use seed to get values [0, NaN, 0, NaN] resulting in an na_ratio of 0.5
     na_filter_1 = NaFilter(max_na_ratio=0.5, sample_ratio=0.5, seed=1)
     na_filter_1.fit(train_df)
-    # Use seed to get values [0, NaN, NaN] which results in a na_ratio of 0.667
+    # Use seed to get values [0, NaN, NaN] resulting in an na_ratio of 0.667
     na_filter_2 = NaFilter(max_na_ratio=0.5, sample_ratio=0.5, seed=2)
     na_filter_2.fit(train_df)
 
